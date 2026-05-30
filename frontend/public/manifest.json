@@ -1,0 +1,10 @@
+{
+  "name": "Gourmet AI Smart Dining",
+  "short_name": "Gourmet AI",
+  "description": "An AI-powered tableside self-ordering assistant",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#ea580c",
+  "icons": []
+}

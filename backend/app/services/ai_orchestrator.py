@@ -152,7 +152,7 @@ class AIOrchestrator:
                         "responseMimeType": "application/json"
                     }
                 }
-                with httpx.Client(timeout=10.0) as client:
+                with httpx.Client(timeout=3.0) as client:
                     resp = client.post(url, json=payload)
                     if resp.status_code == 200:
                         data = resp.json()
@@ -188,7 +188,7 @@ class AIOrchestrator:
                     "response_format": {"type": "json_object"},
                     "temperature": 0.7
                 }
-                with httpx.Client(timeout=10.0) as client:
+                with httpx.Client(timeout=3.0) as client:
                     resp = client.post(url, json=payload)
                     if resp.status_code == 200:
                         data = resp.json()
@@ -228,7 +228,7 @@ class AIOrchestrator:
                     "response_format": {"type": "json_object"},
                     "temperature": 0.7
                 }
-                with httpx.Client(timeout=10.0) as client:
+                with httpx.Client(timeout=3.0) as client:
                     resp = client.post(url, headers=headers, json=payload)
                     if resp.status_code == 200:
                         data = resp.json()
@@ -260,7 +260,7 @@ class AIOrchestrator:
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
             }
             
-            with httpx.Client(timeout=10.0) as client:
+            with httpx.Client(timeout=3.0) as client:
                 status_resp = client.get(status_url, headers=status_headers)
                 if status_resp.status_code == 200:
                     vqd_token = status_resp.headers.get("x-vqd-4")

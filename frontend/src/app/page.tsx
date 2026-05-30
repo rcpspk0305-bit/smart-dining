@@ -50,6 +50,7 @@ export default function Home() {
           </p>
           <div className="flex gap-2">
             <input
+              suppressHydrationWarning
               type="text"
               value={demoTable}
               onChange={(e) => setDemoTable(e.target.value.toUpperCase())}
