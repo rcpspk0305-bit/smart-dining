@@ -131,3 +131,15 @@ def health_check():
         "project": settings.PROJECT_NAME,
         "version": "1.0.0"
     }
+
+
+@app.get("/", tags=["Health"])
+def root_check():
+    """
+    Root diagnostics endpoint to satisfy cloud provider health checks.
+    """
+    return {
+        "status": "online",
+        "message": f"Welcome to {settings.PROJECT_NAME} API. Access /docs for swagger specifications or /health for diagnostics."
+    }
+
