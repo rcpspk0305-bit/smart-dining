@@ -192,7 +192,7 @@ export default function CartDrawer({
           <div className="p-4 bg-neutral-950 border-t border-neutral-850/60 flex flex-col gap-2">
             <Button
               onClick={onPlaceOrder}
-              className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold h-11 rounded-xl text-xs active:scale-95 shadow-md shadow-orange-600/10 flex items-center justify-center gap-1.5"
+              className="w-full bg-[#bc470a] hover:bg-[#a13b08] text-white font-bold h-11 rounded-xl text-xs active:scale-95 shadow-md shadow-orange-600/10 flex items-center justify-center gap-1.5"
             >
               Place Kitchen Order <ArrowRight className="w-4 h-4" />
             </Button>

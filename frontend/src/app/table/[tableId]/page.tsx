@@ -743,10 +743,11 @@ export default function TableSession() {
         <div className="flex items-center gap-3">
           {/* Header Ask Zara Trigger with unread indicator */}
           <button 
+            aria-label="Ask Zara AI Assistant"
             onClick={handleOpenChat}
-            className="relative px-3 py-1.5 bg-orange-600/10 hover:bg-orange-600/20 text-orange-400 border border-orange-500/20 rounded-xl text-[10px] font-bold flex items-center gap-1 active:scale-95 transition-all h-8"
+            className="relative px-3 py-1.5 bg-[#bc470a]/15 hover:bg-[#bc470a]/25 text-orange-300 border border-orange-500/20 rounded-xl text-[10px] font-bold flex items-center gap-1 active:scale-95 transition-all h-8"
           >
-            <Sparkles className="w-3.5 h-3.5 text-orange-400 animate-pulse" /> Ask Zara
+            <Sparkles className="w-3.5 h-3.5 text-orange-300 animate-pulse" /> Ask Zara
             {hasUnreadSuggestions && (
               <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-red-500 border border-neutral-900 animate-ping"></span>
             )}
@@ -875,7 +876,7 @@ export default function TableSession() {
                   </div>
                   
                   <div className="space-y-1">
-                    <h3 className="text-xs font-display font-bold text-neutral-100 pr-10">{pick.name}</h3>
+                    <h2 className="text-xs font-display font-bold text-neutral-100 pr-10">{pick.name}</h2>
                     <p className="text-[10px] text-neutral-400 leading-relaxed line-clamp-2 pr-2">{pick.description}</p>
                   </div>
                   
@@ -884,7 +885,7 @@ export default function TableSession() {
                     <Button
                       size="sm"
                       onClick={() => addToCart(pick, "Recommended by Zara")}
-                      className="bg-orange-600 hover:bg-orange-500 text-white font-bold h-7 rounded-lg text-[10px] px-3 active:scale-95 shadow shadow-orange-600/20"
+                      className="bg-[#bc470a] hover:bg-[#a13b08] text-white font-bold h-7 rounded-lg text-[10px] px-3 active:scale-95 shadow shadow-orange-600/20"
                     >
                       Quick Add
                     </Button>
@@ -903,7 +904,7 @@ export default function TableSession() {
               onClick={() => setActiveCategory(cat)}
               className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
                 activeCategory === cat
-                  ? "bg-orange-600 text-white shadow-md shadow-orange-600/10"
+                  ? "bg-[#bc470a] text-white shadow-md shadow-orange-600/10"
                   : "bg-neutral-900/60 border border-neutral-800/40 text-neutral-400 hover:text-neutral-200"
               }`}
             >
@@ -971,7 +972,7 @@ export default function TableSession() {
                     <div className="space-y-1">
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-1.5">
-                          <h3 className="text-xs font-display font-bold text-neutral-100">{dish.name}</h3>
+                          <h2 className="text-xs font-display font-bold text-neutral-100">{dish.name}</h2>
                           <div className="flex gap-0.5">
                             {dish.tags.includes("veg") && <Leaf className="w-3 h-3 text-emerald-500" title="Veg" />}
                             {dish.tags.includes("spicy") && <Flame className="w-3 h-3 text-red-500" title="Spicy" />}
@@ -988,7 +989,7 @@ export default function TableSession() {
                         {dish.tags.filter(t => t !== "veg" && t !== "non-veg").slice(0, 2).map((t) => (
                           <span
                             key={t}
-                            className="px-1.5 py-0.5 rounded bg-neutral-900/80 border border-neutral-800 text-[8px] font-semibold text-neutral-500 uppercase tracking-wider whitespace-nowrap"
+                            className="px-1.5 py-0.5 rounded bg-neutral-900/80 border border-neutral-800 text-[8px] font-semibold text-[#a6a6a6] uppercase tracking-wider whitespace-nowrap"
                           >
                             {t.replace("_", " ")}
                           </span>
@@ -1018,7 +1019,7 @@ export default function TableSession() {
                         <Button
                           size="sm"
                           onClick={() => addToCart(dish)}
-                          className="h-7 bg-neutral-900 hover:bg-orange-600 border border-neutral-800 text-neutral-300 hover:text-white rounded-lg text-[10px] font-bold px-3 active:scale-95 transition-all"
+                          className="h-7 bg-neutral-900 hover:bg-[#bc470a] border border-neutral-800 text-neutral-300 hover:text-white rounded-lg text-[10px] font-bold px-3 active:scale-95 transition-all"
                         >
                           Add
                         </Button>
@@ -1034,7 +1035,7 @@ export default function TableSession() {
 
       {/* Floating Cart Trigger */}
       {totalQuantity > 0 && !isCartOpen && !isChatOpen && (
-        <div className="absolute bottom-6 left-4 right-4 bg-orange-600 hover:bg-orange-500 border border-orange-500/20 text-white rounded-2xl shadow-xl shadow-orange-950/40 p-4.5 z-20 flex justify-between items-center transition-all duration-300 animate-slide-in-bottom">
+        <div className="absolute bottom-6 left-4 right-4 bg-[#bc470a] hover:bg-[#a13b08] border border-orange-500/20 text-white rounded-2xl shadow-xl shadow-orange-950/40 p-4.5 z-20 flex justify-between items-center transition-all duration-300 animate-slide-in-bottom">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-black/20 rounded-xl">
               <ShoppingBag className="w-5 h-5 text-white" />
@@ -1046,7 +1047,7 @@ export default function TableSession() {
           </div>
           <Button 
             onClick={() => setIsCartOpen(true)}
-            className="bg-white hover:bg-orange-50 text-orange-600 font-bold px-4 py-2 h-9 rounded-xl shadow-sm text-xs"
+            className="bg-white hover:bg-orange-50 text-[#bc470a] font-bold px-4 py-2 h-9 rounded-xl shadow-sm text-xs"
           >
             Review Cart
           </Button>
@@ -1056,8 +1057,9 @@ export default function TableSession() {
       {/* Floating Sparkles AI Zara Trigger with glowing unread dot */}
       {!isChatOpen && (
         <button
+          aria-label="Ask Zara AI"
           onClick={handleOpenChat}
-          className="absolute bottom-6 right-6 w-12 h-12 rounded-full bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-white shadow-xl shadow-orange-950/20 hover:scale-105 active:scale-95 transition-all z-20 border border-orange-500/20"
+          className="absolute bottom-6 right-6 w-12 h-12 rounded-full bg-gradient-to-tr from-[#bc470a] to-[#a13b08] flex items-center justify-center text-white shadow-xl shadow-orange-950/20 hover:scale-105 active:scale-95 transition-all z-20 border border-orange-500/20"
         >
           <Sparkles className="w-5 h-5 text-white animate-pulse" />
           {hasUnreadSuggestions && (

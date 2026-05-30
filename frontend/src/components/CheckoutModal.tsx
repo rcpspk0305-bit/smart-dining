@@ -216,7 +216,7 @@ export default function CheckoutModal({
                   <Button
                     onClick={handleSendOtp}
                     disabled={!customerName.trim() || !phoneNumber.trim()}
-                    className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold h-10 rounded-xl text-xs active:scale-95 transition-all shadow shadow-orange-600/10"
+                    className="w-full bg-[#bc470a] hover:bg-[#a13b08] text-white font-bold h-10 rounded-xl text-xs active:scale-95 transition-all shadow shadow-orange-600/10"
                   >
                     Send Verification OTP
                   </Button>
@@ -258,7 +258,7 @@ export default function CheckoutModal({
                   <Button
                     onClick={handleVerifyAndOrder}
                     disabled={otpCode.length < 6 || isVerifying}
-                    className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold h-10 rounded-xl text-xs active:scale-95 shadow shadow-orange-600/10"
+                    className="w-full bg-[#bc470a] hover:bg-[#a13b08] text-white font-bold h-10 rounded-xl text-xs active:scale-95 shadow shadow-orange-600/10"
                   >
                     {isVerifying ? "Processing Order..." : "Verify & Place Order"}
                   </Button>
@@ -308,7 +308,7 @@ export default function CheckoutModal({
 
             <Button
               onClick={handleCloseSuccess}
-              className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold h-11 rounded-xl text-xs active:scale-95 shadow-md shadow-orange-600/10 flex items-center justify-center gap-1.5"
+              className="w-full bg-[#bc470a] hover:bg-[#a13b08] text-white font-bold h-11 rounded-xl text-xs active:scale-95 shadow-md shadow-orange-600/10 flex items-center justify-center gap-1.5"
             >
               Back to Dining Menu <ArrowRight className="w-4 h-4" />
             </Button>

@@ -57,10 +57,11 @@ export default function Home() {
               placeholder="e.g. T4"
               className="flex-1 px-3 py-2 text-sm rounded bg-neutral-900 border border-neutral-800 focus:outline-none focus:border-orange-500 text-center font-bold font-display uppercase tracking-widest text-orange-300"
             />
-            <Link href={`/table/${demoTable}`} passHref className="flex">
-              <Button className="font-semibold bg-orange-600 hover:bg-orange-500 text-white flex items-center gap-1.5 shadow-lg shadow-orange-500/20 active:scale-95">
-                Sit Down <ArrowRight className="w-4 h-4" />
-              </Button>
+            <Link 
+              href={`/table/${demoTable}`}
+              className="font-semibold bg-[#bc470a] hover:bg-[#a13b08] text-white flex items-center justify-center gap-1.5 shadow-lg shadow-orange-500/20 active:scale-95 h-10 px-5 rounded-md text-sm transition-colors duration-200"
+            >
+              Sit Down <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
