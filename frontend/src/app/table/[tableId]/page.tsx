@@ -974,8 +974,16 @@ export default function TableSession() {
                         <div className="flex items-center gap-1.5">
                           <h2 className="text-xs font-display font-bold text-neutral-100">{dish.name}</h2>
                           <div className="flex gap-0.5">
-                            {dish.tags.includes("veg") && <Leaf className="w-3 h-3 text-emerald-500" title="Veg" />}
-                            {dish.tags.includes("spicy") && <Flame className="w-3 h-3 text-red-500" title="Spicy" />}
+                            {dish.tags.includes("veg") && (
+                              <span title="Veg">
+                                <Leaf className="w-3 h-3 text-emerald-500" />
+                              </span>
+                            )}
+                            {dish.tags.includes("spicy") && (
+                              <span title="Spicy">
+                                <Flame className="w-3 h-3 text-red-500" />
+                              </span>
+                            )}
                           </div>
                         </div>
                         <span className="text-xs font-bold font-mono text-orange-400">₹{dish.price}</span>
