@@ -1,15 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Utensils, QrCode, Sparkles, MapPin, ArrowRight } from "lucide-react";
+import { Utensils, QrCode, Sparkles, MapPin, ArrowRight, AlertCircle } from "lucide-react";
 
 export default function Home() {
   const [demoTable, setDemoTable] = useState("T4");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const err = params.get("error");
+      if (err) {
+        setErrorMsg(err);
+      }
+    }
+  }, []);
 
   return (
     <div className="flex-1 flex flex-col justify-between p-6 pb-12 bg-gradient-to-b from-neutral-900 via-neutral-900 to-black text-white">
+      {errorMsg && (
+        <div className="p-4 rounded-xl bg-red-950/40 border border-red-500/30 text-red-400 text-xs font-semibold flex items-center gap-2 mb-4 animate-fade-in">
+          <AlertCircle className="w-4 h-4 shrink-0 text-red-400" />
+          <span>{errorMsg}</span>
+        </div>
+      )}
       {/* Header Info */}
       <div className="space-y-4 pt-8 text-center">
         <div className="inline-flex items-center justify-center p-3 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 mb-2 animate-bounce">

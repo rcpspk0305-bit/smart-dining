@@ -20,6 +20,7 @@ interface CartDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   items: CartItem[];
+  myAddedItemIds: string[];
   onUpdateQuantity: (itemId: string, delta: number) => void;
   onSaveInstructions: (itemId: string, text: string) => void;
   onPlaceOrder: () => void;
@@ -29,6 +30,7 @@ export default function CartDrawer({
   isOpen,
   onClose,
   items,
+  myAddedItemIds = [],
   onUpdateQuantity,
   onSaveInstructions,
   onPlaceOrder
@@ -44,11 +46,14 @@ export default function CartDrawer({
 
   // Helper to generate realistic group ordering names
   const getAddedByLabel = (itemId: string) => {
-    // Make the first item show "Guest (Me)" and others show a simulated guest for the shared table effect
-    const charCodeSum = itemId.charCodeAt(0) + itemId.charCodeAt(itemId.length - 1);
-    if (charCodeSum % 3 === 0) {
+    // If the item was added by the current user session, always attribute to Guest (Me)
+    if (myAddedItemIds.includes(itemId) || myAddedItemIds.length === 0) {
       return { name: "Guest (Me)", avatarColor: "bg-orange-500/10 text-orange-400 border-orange-500/20" };
-    } else if (charCodeSum % 3 === 1) {
+    }
+
+    // Otherwise, simulate a guest for other items (collaborative sync effect)
+    const charCodeSum = itemId.charCodeAt(0) + itemId.charCodeAt(itemId.length - 1);
+    if (charCodeSum % 2 === 0) {
       return { name: "Aarav (Guest 2)", avatarColor: "bg-blue-500/10 text-blue-400 border-blue-500/20" };
     } else {
       return { name: "Riya (Guest 3)", avatarColor: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" };
@@ -82,6 +87,7 @@ export default function CartDrawer({
           </div>
           <button
             onClick={onClose}
+            aria-label="Close cart"
             className="p-1.5 hover:bg-neutral-800 rounded-full text-neutral-400 hover:text-neutral-200 transition-colors"
           >
             <X className="w-4 h-4" />
@@ -136,6 +142,7 @@ export default function CartDrawer({
                         setBuffer(prev => ({ ...prev, [item.menu_item.id]: val }));
                         onSaveInstructions(item.menu_item.id, val);
                       }}
+                      aria-label={`Special instructions for ${item.menu_item.name}`}
                       placeholder="e.g. Medium spicy, no dairy garnish..."
                       className="w-full bg-neutral-950 border border-neutral-850 rounded-xl px-3 py-1.5 text-[10px] text-neutral-300 focus:outline-none focus:border-orange-500 placeholder-neutral-700 font-medium"
                     />
@@ -150,6 +157,7 @@ export default function CartDrawer({
                     <div className="flex items-center gap-2 bg-neutral-950 border border-neutral-850 rounded-lg p-0.5">
                       <button
                         onClick={() => onUpdateQuantity(item.menu_item.id, -1)}
+                        aria-label={`Decrease quantity of ${item.menu_item.name}`}
                         className="w-5.5 h-5.5 rounded bg-neutral-900 flex items-center justify-center hover:bg-neutral-800 text-neutral-400"
                       >
                         <Minus className="w-2.5 h-2.5" />
@@ -157,6 +165,7 @@ export default function CartDrawer({
                       <span className="text-[10px] font-mono font-bold px-1 text-neutral-200">{item.quantity}</span>
                       <button
                         onClick={() => onUpdateQuantity(item.menu_item.id, 1)}
+                        aria-label={`Increase quantity of ${item.menu_item.name}`}
                         className="w-5.5 h-5.5 rounded bg-neutral-900 flex items-center justify-center hover:bg-neutral-800 text-neutral-400"
                       >
                         <Plus className="w-2.5 h-2.5" />

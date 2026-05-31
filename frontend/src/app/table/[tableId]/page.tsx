@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -332,6 +332,7 @@ const ALLERGENS = ["Dairy", "Nuts", "Gluten", "Fish", "Mustard", "Sesame", "Soy"
 
 export default function TableSession() {
   const { tableId } = useParams();
+  const router = useRouter();
   
   // UI States
   const [activeCategory, setActiveCategory] = useState<string>("All");
@@ -341,6 +342,28 @@ export default function TableSession() {
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState<boolean>(false);
+  const [a11yAnnouncement, setA11yAnnouncement] = useState<string>("");
+  const [myAddedItemIds, setMyAddedItemIds] = useState<string[]>([]);
+
+  // Table ID Route Param Validation
+  useEffect(() => {
+    const validTables = ["T1", "T2", "T3", "T4", "T5"];
+    if (typeof tableId === "string" && !validTables.includes(tableId.toUpperCase())) {
+      router.push("/?error=Invalid%20table.%20Please%20scan%20the%20QR%20code%20at%20your%20table.");
+    }
+  }, [tableId, router]);
+
+  // Load user added items tracking from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(`my_added_items_${tableId}`);
+      if (saved) {
+        setMyAddedItemIds(JSON.parse(saved));
+      }
+    } catch (e) {
+      console.warn("Could not read myAddedItemIds from localStorage", e);
+    }
+  }, [tableId]);
   
   // Collaborative & Live Backend Sync States
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -501,6 +524,19 @@ export default function TableSession() {
 
   // Cart operations
   const addToCart = async (item: MenuItem, notes?: string) => {
+    setA11yAnnouncement(`Added ${item.name} to your order.`);
+    setTimeout(() => setA11yAnnouncement(""), 3000);
+
+    // Track items locally added by the user
+    setMyAddedItemIds((prev) => {
+      if (prev.includes(item.id)) return prev;
+      const next = [...prev, item.id];
+      try {
+        localStorage.setItem(`my_added_items_${tableId}`, JSON.stringify(next));
+      } catch (e) {}
+      return next;
+    });
+
     if (isBackendMode && sessionId) {
       try {
         const payload = {
@@ -550,6 +586,24 @@ export default function TableSession() {
     if (!currentItem) return;
 
     const nextQty = currentItem.quantity + delta;
+    if (nextQty <= 0) {
+      setA11yAnnouncement(`Removed ${currentItem.menu_item.name} from your order.`);
+    } else if (delta > 0) {
+      setA11yAnnouncement(`Increased quantity of ${currentItem.menu_item.name} to ${nextQty}.`);
+
+      // Track item as added by this user if incremented
+      setMyAddedItemIds((prev) => {
+        if (prev.includes(itemId)) return prev;
+        const next = [...prev, itemId];
+        try {
+          localStorage.setItem(`my_added_items_${tableId}`, JSON.stringify(next));
+        } catch (e) {}
+        return next;
+      });
+    } else if (delta < 0) {
+      setA11yAnnouncement(`Decreased quantity of ${currentItem.menu_item.name} to ${nextQty}.`);
+    }
+    setTimeout(() => setA11yAnnouncement(""), 3000);
 
     if (isBackendMode && sessionId) {
       try {
@@ -809,12 +863,14 @@ export default function TableSession() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label="Search menu items by name, category, or tags"
               placeholder="Search biryani, paneer, drinks, tags..."
               className="w-full pl-10 pr-4 py-2.5 bg-neutral-900/80 border border-neutral-800/80 rounded-2xl text-xs text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/30 transition-all font-medium"
             />
             {searchQuery && (
               <button 
                 onClick={() => setSearchQuery("")} 
+                aria-label="Clear search query"
                 className="absolute right-3 top-3.5 text-neutral-500 hover:text-neutral-300"
               >
                 <X className="w-3.5 h-3.5" />
@@ -885,6 +941,7 @@ export default function TableSession() {
                     <Button
                       size="sm"
                       onClick={() => addToCart(pick, "Recommended by Zara")}
+                      aria-label={`Quick Add ${pick.name} to cart`}
                       className="bg-[#bc470a] hover:bg-[#a13b08] text-white font-bold h-7 rounded-lg text-[10px] px-3 active:scale-95 shadow shadow-orange-600/20"
                     >
                       Quick Add
@@ -902,7 +959,8 @@ export default function TableSession() {
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+              aria-pressed={activeCategory === cat}
+              className={`px-4 py-1.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
                 activeCategory === cat
                   ? "bg-[#bc470a] text-white shadow-md shadow-orange-600/10"
                   : "bg-neutral-900/60 border border-neutral-800/40 text-neutral-400 hover:text-neutral-200"
@@ -1009,6 +1067,7 @@ export default function TableSession() {
                         <div className="flex items-center gap-2 bg-neutral-900/60 border border-neutral-800/80 rounded-lg p-0.5">
                           <button
                             onClick={() => updateQuantity(dish.id, -1)}
+                            aria-label={`Decrease quantity of ${dish.name}`}
                             className="w-5 h-5 rounded bg-neutral-950 flex items-center justify-center hover:bg-neutral-800 active:scale-90"
                           >
                             <Minus className="w-2.5 h-2.5 text-neutral-400" />
@@ -1018,6 +1077,7 @@ export default function TableSession() {
                           </span>
                           <button
                             onClick={() => addToCart(dish)}
+                            aria-label={`Increase quantity of ${dish.name}`}
                             className="w-5 h-5 rounded bg-neutral-950 flex items-center justify-center hover:bg-neutral-800 active:scale-90"
                           >
                             <Plus className="w-2.5 h-2.5 text-neutral-400" />
@@ -1027,6 +1087,7 @@ export default function TableSession() {
                         <Button
                           size="sm"
                           onClick={() => addToCart(dish)}
+                          aria-label={`Add ${dish.name} to cart`}
                           className="h-7 bg-neutral-900 hover:bg-[#bc470a] border border-neutral-800 text-neutral-300 hover:text-white rounded-lg text-[10px] font-bold px-3 active:scale-95 transition-all"
                         >
                           Add
@@ -1054,8 +1115,9 @@ export default function TableSession() {
             </div>
           </div>
           <Button 
-            onClick={() => setIsCartOpen(true)}
-            className="bg-white hover:bg-orange-50 text-[#bc470a] font-bold px-4 py-2 h-9 rounded-xl shadow-sm text-xs"
+            onClick={() => totalQuantity > 0 && setIsCartOpen(true)}
+            disabled={totalQuantity === 0}
+            className="bg-white hover:bg-orange-50 text-[#bc470a] font-bold px-4 py-2 h-9 rounded-xl shadow-sm text-xs disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Review Cart
           </Button>
@@ -1065,7 +1127,7 @@ export default function TableSession() {
       {/* Floating Sparkles AI Zara Trigger with glowing unread dot */}
       {!isChatOpen && (
         <button
-          aria-label="Ask Zara AI"
+          aria-label="Open Ask Zara AI Assistant"
           onClick={handleOpenChat}
           className="absolute bottom-6 right-6 w-12 h-12 rounded-full bg-gradient-to-tr from-[#bc470a] to-[#a13b08] flex items-center justify-center text-white shadow-xl shadow-orange-950/20 hover:scale-105 active:scale-95 transition-all z-20 border border-orange-500/20"
         >
@@ -1081,6 +1143,7 @@ export default function TableSession() {
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         items={cart}
+        myAddedItemIds={myAddedItemIds}
         onUpdateQuantity={(itemId, delta) => updateQuantity(itemId, delta)}
         onSaveInstructions={(itemId, text) => saveInstructions(itemId, text)}
         onPlaceOrder={() => { setIsCartOpen(false); setIsCheckoutOpen(true); }}
@@ -1105,6 +1168,16 @@ export default function TableSession() {
         onAddToCartById={handleAddToCartById}
         isTyping={isTyping}
       />
+
+      {/* Visually hidden active aria-live region for accessibility announcements */}
+      <div 
+        className="sr-only" 
+        role="status" 
+        aria-live="polite" 
+        aria-atomic="true"
+      >
+        {a11yAnnouncement}
+      </div>
     </div>
   );
 }

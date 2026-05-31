@@ -39,6 +39,11 @@ export default function CheckoutModal({
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [otpCode, setOtpCode] = useState<string>("");
 
+  // Validation States
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [otpError, setOtpError] = useState<string | null>(null);
+
   // Step states
   const [otpSent, setOtpSent] = useState<boolean>(false);
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
@@ -47,18 +52,37 @@ export default function CheckoutModal({
   const [estimatedWaitTime, setEstimatedWaitTime] = useState<number>(15);
 
   const handleSendOtp = () => {
-    if (!customerName.trim() || !phoneNumber.trim()) {
-      alert("Please enter both your name and phone number!");
-      return;
+    let hasError = false;
+    
+    if (!customerName.trim()) {
+      setNameError("Name is required");
+      hasError = true;
+    } else {
+      setNameError(null);
     }
+
+    const cleanPhone = phoneNumber.replace(/\D/g, "");
+    if (!phoneNumber.trim()) {
+      setPhoneError("Phone number is required");
+      hasError = true;
+    } else if (cleanPhone.length !== 10) {
+      setPhoneError("Please enter a valid 10-digit Indian phone number");
+      hasError = true;
+    } else {
+      setPhoneError(null);
+    }
+
+    if (hasError) return;
+
     setOtpSent(true);
   };
 
   const handleVerifyAndOrder = async () => {
     if (otpCode !== "123456") {
-      alert("Invalid verification code! In demo mode, enter OTP code 123456 to authenticate.");
+      setOtpError("Incorrect OTP. In demo mode, enter OTP code 123456 to authenticate.");
       return;
     }
+    setOtpError(null);
 
     setIsVerifying(true);
 
@@ -142,7 +166,7 @@ export default function CheckoutModal({
   if (!isOpen) return null;
 
   return (
-    <div className="absolute inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-6 animate-fade-in">
+    <div className="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-6 animate-fade-in">
       <div className="w-full max-w-sm bg-neutral-900 border border-neutral-800 rounded-3xl p-5 shadow-2xl relative overflow-hidden">
         
         {/* Glowing visual backdrop */}
@@ -160,6 +184,7 @@ export default function CheckoutModal({
               </div>
               <button
                 onClick={onClose}
+                aria-label="Close checkout modal"
                 className="p-1 rounded-full hover:bg-neutral-800 text-neutral-400 hover:text-neutral-200 transition-colors"
               >
                 <X className="w-4 h-4" />
@@ -181,41 +206,68 @@ export default function CheckoutModal({
                 <div className="space-y-4 animate-fade-in">
                   {/* Name Input */}
                   <div className="space-y-1">
-                    <label className="text-[9px] text-neutral-500 font-bold uppercase tracking-wider block">
+                    <label 
+                      htmlFor="customer-name-input"
+                      className="text-[9px] text-neutral-500 font-bold uppercase tracking-wider block"
+                    >
                       Your Name
                     </label>
                     <div className="relative">
                       <User className="absolute left-3.5 top-3 w-3.5 h-3.5 text-neutral-600" />
                       <input
+                        id="customer-name-input"
                         type="text"
                         value={customerName}
-                        onChange={(e) => setCustomerName(e.target.value)}
+                        onChange={(e) => {
+                          setCustomerName(e.target.value);
+                          if (nameError) setNameError(null);
+                        }}
                         placeholder="Enter full name"
-                        className="w-full bg-neutral-950 border border-neutral-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-neutral-200 focus:outline-none focus:border-orange-500 font-medium"
+                        className={`w-full bg-neutral-950 border rounded-xl pl-10 pr-4 py-2.5 text-xs text-neutral-200 focus:outline-none focus:border-orange-500 font-medium ${
+                          nameError ? "border-red-500 ring-1 ring-red-500/20" : "border-neutral-800"
+                        }`}
                       />
                     </div>
+                    {nameError && (
+                      <p className="text-[9px] text-red-400 font-medium mt-1">
+                        {nameError}
+                      </p>
+                    )}
                   </div>
 
                   {/* Phone Input */}
                   <div className="space-y-1">
-                    <label className="text-[9px] text-neutral-500 font-bold uppercase tracking-wider block">
+                    <label 
+                      htmlFor="phone-number-input"
+                      className="text-[9px] text-neutral-500 font-bold uppercase tracking-wider block"
+                    >
                       Phone Number
                     </label>
                     <div className="relative">
                       <Phone className="absolute left-3.5 top-3 w-3.5 h-3.5 text-neutral-600" />
                       <input
+                        id="phone-number-input"
                         type="tel"
                         value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        placeholder="+91 (555) 000-0000"
-                        className="w-full bg-neutral-950 border border-neutral-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-neutral-200 focus:outline-none focus:border-orange-500 font-bold font-mono placeholder-neutral-700"
+                        onChange={(e) => {
+                          setPhoneNumber(e.target.value);
+                          if (phoneError) setPhoneError(null);
+                        }}
+                        placeholder="10-digit phone number"
+                        className={`w-full bg-neutral-950 border rounded-xl pl-10 pr-4 py-2.5 text-xs text-neutral-200 focus:outline-none focus:border-orange-500 font-bold font-mono placeholder-neutral-700 ${
+                          phoneError ? "border-red-500 ring-1 ring-red-500/20" : "border-neutral-800"
+                        }`}
                       />
                     </div>
+                    {phoneError && (
+                      <p className="text-[9px] text-red-400 font-medium mt-1">
+                        {phoneError}
+                      </p>
+                    )}
                   </div>
 
                   <Button
                     onClick={handleSendOtp}
-                    disabled={!customerName.trim() || !phoneNumber.trim()}
                     className="w-full bg-[#bc470a] hover:bg-[#a13b08] text-white font-bold h-10 rounded-xl text-xs active:scale-95 transition-all shadow shadow-orange-600/10"
                   >
                     Send Verification OTP
@@ -248,11 +300,22 @@ export default function CheckoutModal({
                         type="text"
                         maxLength={6}
                         value={otpCode}
-                        onChange={(e) => setOtpCode(e.target.value)}
+                        onChange={(e) => {
+                          setOtpCode(e.target.value);
+                          if (otpError) setOtpError(null);
+                        }}
+                        aria-label="Enter 6-digit OTP code"
                         placeholder="Enter 6-digit code"
-                        className="w-full bg-neutral-950 border border-neutral-800 rounded-xl pl-10 pr-4 py-2.5 text-sm tracking-widest text-center text-orange-400 font-bold font-mono focus:outline-none focus:border-orange-500"
+                        className={`w-full bg-neutral-950 border rounded-xl pl-10 pr-4 py-2.5 text-sm tracking-widest text-center text-orange-400 font-bold font-mono focus:outline-none focus:border-orange-500 ${
+                          otpError ? "border-red-500 ring-1 ring-red-500/20" : "border-neutral-800"
+                        }`}
                       />
                     </div>
+                    {otpError && (
+                      <p className="text-[10px] text-red-400 font-medium mt-1.5 animate-pulse text-center">
+                        {otpError}
+                      </p>
+                    )}
                   </div>
 
                   <Button

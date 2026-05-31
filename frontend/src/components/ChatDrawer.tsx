@@ -181,11 +181,11 @@ export default function ChatDrawer({
 
                   {/* Horizontal Scroll Recommendation Cards Inside Chat Bubble */}
                   {!isUser && cards.length > 0 && (
-                    <div className="flex gap-3 overflow-x-auto no-scrollbar py-1 max-w-[280px]">
+                    <div className="flex flex-col gap-3 py-1 w-full max-w-[280px]">
                       {cards.map((card) => (
                         <div
                           key={card.id}
-                          className="w-56 shrink-0 rounded-2xl bg-neutral-950 border border-neutral-850 p-3 flex flex-col justify-between gap-2.5 shadow-md"
+                          className="w-full rounded-2xl bg-neutral-950 border border-neutral-850 p-3 flex flex-col justify-between gap-2.5 shadow-md"
                         >
                           <div className="space-y-1">
                             <div className="flex items-start justify-between gap-1">
@@ -213,6 +213,7 @@ export default function ChatDrawer({
                                 onAddToCartById(card.id);
                                 alert(`Succesfully added ${card.name} to your cart via Zara!`);
                               }}
+                              aria-label={`Quick Add ${card.name} to cart`}
                               className="bg-[#bc470a] hover:bg-[#a13b08] text-white font-bold h-6 rounded-md text-[9px] px-2.5 active:scale-95 transition-all flex items-center gap-1 shadow shadow-orange-600/10"
                             >
                               <Plus className="w-2.5 h-2.5" /> Quick Add
@@ -249,6 +250,7 @@ export default function ChatDrawer({
             <button
               key={chip.label}
               onClick={() => handleChipClick(chip.prompt)}
+              aria-label={`Ask Zara: ${chip.prompt}`}
               className="px-3 py-1 rounded-full bg-neutral-900 border border-neutral-800 text-[9px] font-semibold text-neutral-400 hover:text-neutral-200 transition-colors whitespace-nowrap hover:border-neutral-700"
             >
               {chip.label}
@@ -263,6 +265,7 @@ export default function ChatDrawer({
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
+            aria-label="Ask Zara AI Assistant"
             placeholder="Ask Zara for wine pairings, allergy updates, or calls..."
             className="flex-1 bg-neutral-900 border border-neutral-850 text-xs rounded-xl px-4 py-2.5 focus:outline-none focus:border-orange-500 text-neutral-200 placeholder-neutral-600 font-medium"
           />
